@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     private WaitForSeconds m_EndWait;           
     private TankManager m_RoundWinner;          
     private TankManager m_GameWinner;           
+    private int enemyPoints;
 
 
     private void Start()
@@ -70,7 +71,10 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(RoundPlaying());
         yield return StartCoroutine(RoundEnding());
 
-        if (m_GameWinner != null) SceneManager.LoadScene(0);
+        if (m_GameWinner != null) 
+            if (m_GameWinner == m_Tanks[0])
+                SceneManager.LoadScene(0);
+            else SceneManager.LoadScene(0);
         else StartCoroutine(GameLoop());
     }
 
@@ -95,7 +99,7 @@ public class GameManager : MonoBehaviour
 
         m_MessageText.text = string.Empty;
 
-        while (m_Tanks[0].m_Instance.activeSelf) yield return null;
+        while (!(!m_Tanks[0].m_Instance.activeSelf || OneTankLeft())) yield return null;
     }
 
 
@@ -106,7 +110,11 @@ public class GameManager : MonoBehaviour
         m_RoundWinner = null;
 
         m_RoundWinner = GetRoundWinner();
-        if (m_RoundWinner != null) m_RoundWinner.m_Wins++;
+        // if (m_RoundWinner != null) m_RoundWinner.m_Wins++;
+        if (m_RoundWinner != null) 
+            m_RoundWinner.m_Wins++;
+        else
+            enemyPoints++;
 
         m_GameWinner = GetGameWinner();
 
@@ -131,22 +139,27 @@ public class GameManager : MonoBehaviour
 
     private TankManager GetRoundWinner()
     {
-        for (int i = 0; i < m_Tanks.Length; i++)
-        {
-            if (m_Tanks[i].m_Instance.activeSelf)
-                return m_Tanks[i];
-        }
+        // for (int i = 0; i < m_Tanks.Length; i++)
+        // {
+        //     if (m_Tanks[i].m_Instance.activeSelf)
+        //         return m_Tanks[i];
+        // }
+        if (m_Tanks[0].m_Instance.activeSelf) return m_Tanks[0];
 
         return null;
     }
 
     private TankManager GetGameWinner()
     {
-        for (int i = 0; i < m_Tanks.Length; i++)
-        {
-            if (m_Tanks[i].m_Wins == m_NumRoundsToWin)
-                return m_Tanks[i];
-        }
+        // for (int i = 0; i < m_Tanks.Length; i++)
+        // {
+        //     if (m_Tanks[i].m_Wins == m_NumRoundsToWin)
+        //         return m_Tanks[i];
+        // }
+        if (m_Tanks[0].m_Wins == m_NumRoundsToWin)
+            return m_Tanks[0];
+        else if (enemyPoints == m_NumRoundsToWin)
+            return m_Tanks[1];
 
         return null;
     }
@@ -157,17 +170,25 @@ public class GameManager : MonoBehaviour
         var sb = new StringBuilder();
 
         if (m_RoundWinner != null) sb.Append($"{m_RoundWinner.m_ColoredPlayerText} WINS THE ROUND!");
-        else sb.Append("DRAW!");
+        // else sb.Append("DRAW!");
+        else sb.Append("ENEMY WINS THE ROUND");
 
         sb.Append("\n\n\n\n");
 
-        for (int i = 0; i < m_Tanks.Length; i++)
-        {
-            sb.AppendLine($"{m_Tanks[i].m_ColoredPlayerText}: {m_Tanks[i].m_Wins} WINS");
-        }
+        sb.AppendLine($"{m_Tanks[0].m_ColoredPlayerText}: {m_Tanks[0].m_Wins} WINS");
 
-        if (m_GameWinner != null)
+        sb.AppendLine($"Enemy: {enemyPoints} WINS");
+
+        // for (int i = 1; i < m_Tanks.Length; i++)
+        // {
+        //     sb.AppendLine($"{m_Tanks[i].m_ColoredPlayerText}: {m_Tanks[i].m_Wins} WINS");
+        // }
+
+        // if (m_GameWinner != null)
+        if (m_GameWinner == m_Tanks[0])
             sb.Append($"{m_GameWinner.m_ColoredPlayerText} WINS THE GAME!");
+        if (m_GameWinner == m_Tanks[1])
+            sb.Append($"ENEMY WINS THE GAME!");
 
         return sb.ToString();
     }
