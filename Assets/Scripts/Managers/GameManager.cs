@@ -95,7 +95,7 @@ public class GameManager : MonoBehaviour
 
         m_MessageText.text = string.Empty;
 
-        while (!OneTankLeft()) yield return null;
+        while (m_Tanks[0].m_Instance.activeSelf) yield return null;
     }
 
 
