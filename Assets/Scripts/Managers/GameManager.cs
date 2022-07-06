@@ -175,9 +175,9 @@ public class GameManager : MonoBehaviour
 
         sb.Append("\n\n\n\n");
 
-        sb.AppendLine($"{m_Tanks[0].m_ColoredPlayerText}: {m_Tanks[0].m_Wins} WINS");
+        sb.AppendLine($"{m_Tanks[0].m_ColoredPlayerText}: {m_Tanks[0].m_Wins} / {m_NumRoundsToWin} WINS");
 
-        sb.AppendLine($"Enemy: {enemyPoints} WINS");
+        sb.AppendLine($"Enemy: {enemyPoints} / {m_NumRoundsToWin} WINS");
 
         // for (int i = 1; i < m_Tanks.Length; i++)
         // {
